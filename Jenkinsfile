@@ -6,6 +6,9 @@ pipeline {
         //gitlabCommitStatus(name: 'master-build')
         disableConcurrentBuilds()
     }
+    triggers {
+        githubPush()
+    }
     stages {
         stage ('ds-initial-build') {
             steps {
@@ -50,29 +53,29 @@ pipeline {
         success {
             emailext ([
                 attachLog: true,
-                body: '$DEFAULT_CONTENT',
-                subject: '$Default_Subject',
+                body: '${JELLY_SCRIPT,template="html"}',
+                subject: '[NB82] $PROJECT_NAME - Build # $BUILD_NUMBER - $BUILD_STATUS!',
                 to: 'kushan.adikari@ifsworld.com'
         ])
         }
-        failure {
-            emailext ([
-                attachLog: true,
-                body: '$DEFAULT_CONTENT',
-                subject: '$Default_Subject',
-                to: 'kushan.adikari@ifsworld.com'
-            ])
-        }
-        unstable {
-            script {
-                currentBuild.result = 'UNSTABLE'
-            }
-            emailext ([
-                attachLog: true,
-                body: '$DEFAULT_CONTENT',
-                subject: '$Default_Subject',
-                to: 'kushan.adikari@ifsworld.com'
-        ])
-        }
+        // failure {
+        //     emailext ([
+        //         attachLog: true,
+        //         body: '$DEFAULT_CONTENT',
+        //         subject: '$Default_Subject',
+        //         to: 'kushan.adikari@ifsworld.com'
+        //     ])
+        // }
+        // unstable {
+        //     script {
+        //         currentBuild.result = 'UNSTABLE'
+        //     }
+        //     emailext ([
+        //         attachLog: true,
+        //         body: '$DEFAULT_CONTENT',
+        //         subject: '$Default_Subject',
+        //         to: 'kushan.adikari@ifsworld.com'
+        // ])
+        // }
     }
 }
